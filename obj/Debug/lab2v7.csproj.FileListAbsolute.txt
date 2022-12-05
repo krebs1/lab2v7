@@ -1,0 +1,7 @@
+C:\Users\fanto\RiderProjects\lab2v7\bin\Debug\lab2v7.exe
+C:\Users\fanto\RiderProjects\lab2v7\bin\Debug\lab2v7.pdb
+C:\Users\fanto\RiderProjects\lab2v7\obj\Debug\lab2v7.csproj.AssemblyReference.cache
+C:\Users\fanto\RiderProjects\lab2v7\obj\Debug\lab2v7.csproj.SuggestedBindingRedirects.cache
+C:\Users\fanto\RiderProjects\lab2v7\obj\Debug\lab2v7.csproj.CoreCompileInputs.cache
+C:\Users\fanto\RiderProjects\lab2v7\obj\Debug\lab2v7.exe
+C:\Users\fanto\RiderProjects\lab2v7\obj\Debug\lab2v7.pdb
