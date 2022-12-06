@@ -38,7 +38,7 @@ namespace lab2v7
 
     class DecomEquipmentByReason : Equipment
     {
-        private string DecomissedReason;
+        public string DecomissedReason { get; }
         public string DecomissedDate { get; }
 
         public DecomEquipmentByReason(string name, string serialNumber, string registrationDate, string lastMaintenanceDate, string decomissedReason, string decomissedDate) : base(name, serialNumber, registrationDate, lastMaintenanceDate)
@@ -107,10 +107,25 @@ namespace lab2v7
             {
                 reader.ReadBoolean();
                 maxId = reader.ReadInt32();
-                reader.ReadString();
-                reader.ReadString();
-                reader.ReadString();
-                reader.ReadString();
+                var type = reader.ReadByte();
+                switch (type)
+                {
+                    case 0:
+                        reader.ReadString();
+                        reader.ReadString();
+                        reader.ReadString();
+                        reader.ReadString();
+                        reader.ReadString();
+                        break;
+                    case 1:
+                        reader.ReadString();
+                        reader.ReadString();
+                        reader.ReadString();
+                        reader.ReadString();
+                        reader.ReadString();
+                        reader.ReadString();
+                        break;
+                }
             }
             reader.Close();
         }
@@ -125,10 +140,29 @@ namespace lab2v7
                 writer.Seek(0, SeekOrigin.End);
                 writer.Write(false);
                 writer.Write(record.Id);
-                writer.Write(record.Name);
-                writer.Write(record.SerialNumber);
-                writer.Write(record.RegistrationDate);
-                writer.Write(record.LastMaintenanceDate);
+                /*Console.Clear();
+                Console.WriteLine(TypeDescriptor.GetClassName(record));
+                Console.ReadLine();*/
+                switch (TypeDescriptor.GetClassName(record))
+                {
+                    case "lab2v7.DecomEquipmentByTime":
+                        writer.Write((byte)0);
+                        writer.Write(record.Name);
+                        writer.Write(record.SerialNumber);
+                        writer.Write(record.RegistrationDate);
+                        writer.Write(record.LastMaintenanceDate);
+                        writer.Write((record as DecomEquipmentByTime).DecomissedDate);
+                        break;
+                    case "lab2v7.DecomEquipmentByReason":
+                        writer.Write((byte)1);
+                        writer.Write(record.Name);
+                        writer.Write(record.SerialNumber);
+                        writer.Write(record.RegistrationDate);
+                        writer.Write(record.LastMaintenanceDate);
+                        writer.Write((record as DecomEquipmentByReason).DecomissedDate);
+                        writer.Write((record as DecomEquipmentByReason).DecomissedReason);
+                        break;
+                }
                 writer.Close();
             }
             else
@@ -142,26 +176,55 @@ namespace lab2v7
                     var id = reader.ReadInt32();
                     if (id == record.Id)
                     {
+                        var type = reader.ReadByte();
                         reader.Close();
                         var writer = new BinaryWriter(File.Open(_path, FileMode.OpenOrCreate));
                         writer.Seek(offset, SeekOrigin.Begin);
-                        writer.Write(false);
-                        writer.Write(record.Id);
-                        writer.Write(record.Name);
-                        writer.Write(record.SerialNumber);
-                        writer.Write(record.RegistrationDate);
-                        writer.Write(record.LastMaintenanceDate);
+                        switch (type)
+                        {
+                            case 0:
+                                writer.Write(false);
+                                writer.Write(record.Id);
+                                writer.Write((byte)0);
+                                writer.Write(record.Name);
+                                writer.Write(record.SerialNumber);
+                                writer.Write(record.RegistrationDate);
+                                writer.Write(record.LastMaintenanceDate);
+                                writer.Write((record as DecomEquipmentByTime).DecomissedDate);
+                                break;
+                            case 1:
+                                writer.Write(false);
+                                writer.Write(record.Id);
+                                writer.Write((byte)1);
+                                writer.Write(record.Name);
+                                writer.Write(record.SerialNumber);
+                                writer.Write(record.RegistrationDate);
+                                writer.Write(record.LastMaintenanceDate);
+                                writer.Write((record as DecomEquipmentByReason).DecomissedDate);
+                                writer.Write((record as DecomEquipmentByReason).DecomissedReason);
+                                break;
+                        }
                         writer.Close();
                         break;
                     }
-                    else
+
+                    var type1 = reader.ReadByte();
+                    var a = reader.ReadString();
+                    var b = reader.ReadString();
+                    var c = reader.ReadString();
+                    var d = reader.ReadString();
+                    var e = reader.ReadString();
+                    switch (type1)
                     {
-                        var a = reader.ReadString();
-                        var b = reader.ReadString();
-                        var c = reader.ReadString();
-                        var d = reader.ReadString();
-                        offset = offset + 1 + 4 + a.Length + 1 + b.Length + 1 + c.Length + 1 + d.Length + 1;
+                        case 0:
+                            offset = offset + 1 + 4 + a.Length + 1 + b.Length + 1 + c.Length + 1 + d.Length + 1 + e.Length + 1;
+                            break;
+                        case 1:
+                            var f = reader.ReadString();
+                            offset = offset + 1 + 4 + a.Length + 1 + b.Length + 1 + c.Length + 1 + d.Length + 1 + e.Length + 1 + f.Length + 1;
+                            break;
                     }
+                    
                 }
                 reader.Close();
             }
@@ -177,21 +240,37 @@ namespace lab2v7
             {
                 reader.ReadBoolean();
                 var _id = reader.ReadInt32();
+                var type = reader.ReadByte();
                 if (_id == id)
                 {
                     var a = reader.ReadString();
                     var b = reader.ReadString();
                     var c = reader.ReadString();
                     var d = reader.ReadString();
-                    var rec = new DecomEquipmentByTime(a, b,c,d,"1");
-                    rec.Id = _id;
-                    reader.Close();
-                    return rec;
+                    var e = reader.ReadString();
+                    switch (type)
+                    {
+                        case 0:
+                            var rec = new DecomEquipmentByTime(a, b,c,d,e);
+                            rec.Id = _id;
+                            reader.Close();
+                            return rec;
+                            break;
+                        case 1:
+                            var f = reader.ReadString();
+                            var rec2 = new DecomEquipmentByReason(a, b,c,d,e,f);
+                            rec2.Id = _id;
+                            reader.Close();
+                            return rec2;
+                            break;
+                    }
                 }
                 reader.ReadString();
                 reader.ReadString();
                 reader.ReadString();
                 reader.ReadString();
+                reader.ReadString();
+                if(type ==1) reader.ReadString();
             }
         }
 
@@ -204,6 +283,7 @@ namespace lab2v7
             {
                 reader.ReadBoolean();
                 var _id = reader.ReadInt32();
+                var type = reader.ReadByte();
                 if (_id == id)
                 {
                     reader.Close();
@@ -213,18 +293,26 @@ namespace lab2v7
                     writer.Close();
                     break;
                 }
-                else if (_id == maxId)
+                if (_id == maxId)
                 {
                     reader.Close();
                     break;
                 }
-                else
+
+                var a = reader.ReadString();
+                var b = reader.ReadString();
+                var c = reader.ReadString();
+                var d = reader.ReadString();
+                var e = reader.ReadString();
+                switch (type)
                 {
-                    var a = reader.ReadString();
-                    var b = reader.ReadString();
-                    var c = reader.ReadString();
-                    var d = reader.ReadString();
-                    offset = offset + 1 + 4 + a.Length + 1 + b.Length + 1 + c.Length + 1 + d.Length + 1;
+                    case 0:
+                        offset = offset + 1 + 4 + a.Length + 1 + b.Length + 1 + c.Length + 1 + d.Length + 1 + e.Length + 1;
+                        break;
+                    case 1:
+                        var f = reader.ReadString();
+                        offset = offset + 1 + 4 + a.Length + 1 + b.Length + 1 + c.Length + 1 + d.Length + 1 + e.Length + 1 + f.Length + 1;
+                        break;
                 }
             }
             return true;
@@ -244,16 +332,32 @@ namespace lab2v7
                     return list;
                 }
                 var flag = reader.ReadBoolean();
+                /*Console.Clear();
+                Console.WriteLine(flag);
+                Console.ReadLine();*/
                 _id = reader.ReadInt32();
+                var type = reader.ReadByte();
                 var _name = reader.ReadString();
                 var _serialNumber = reader.ReadString();
                 var _date1 = reader.ReadString();
                 var _date2 = reader.ReadString();
-                if (flag)
+                var _date3 = reader.ReadString();
+                if (!flag)
                 {
-                    var rec = new DecomEquipmentByTime(_name, _serialNumber, _date1, _date2, "1");
-                    rec.Id = _id;
-                    list.Add(rec);
+                    switch (type)
+                    {
+                        case 0:
+                            var rec = new DecomEquipmentByTime(_name, _serialNumber, _date1, _date2, _date3);
+                            rec.Id = _id;
+                            list.Add(rec);
+                            break;
+                        case 1:
+                            var _reason = reader.ReadString();
+                            var rec1 = new DecomEquipmentByReason(_name, _serialNumber, _date1, _date2, _date3, _reason);
+                            rec1.Id = _id;
+                            list.Add(rec1);
+                            break;
+                    }
                 }
             }
         }
@@ -312,6 +416,34 @@ namespace lab2v7
         {
             return _dataSource.Get(id);
         }
+
+        public void CreateReport(string path, int ageFrom, int ageTo)
+        {
+            var kvStorage = new Dictionary<int, int>();
+            var records = _dataSource.GetAll();
+            var currentDate = DateTime.Today;
+            
+            foreach (var record in records)
+            {
+                var year = Convert.ToInt32(record.RegistrationDate.Substring(0, 4));
+                var month = Convert.ToInt32(record.RegistrationDate.Substring(5, 2));
+                var day = Convert.ToInt32(record.RegistrationDate.Substring(8, 2));
+                var date = new DateTime(year, month, day);
+
+                var dif = ((currentDate.Year - date.Year) * 12) + currentDate.Month - date.Month;
+                if (dif < ageFrom || dif > ageTo) continue;
+                if (kvStorage.ContainsKey(dif)) kvStorage[dif]++;
+                else kvStorage.Add(dif, 1);
+            }
+            
+            using (StreamWriter writer = new StreamWriter(path, false))
+            {
+                foreach (var kvPair in kvStorage)
+                {
+                    writer.WriteLine($"{kvPair.Key} month: {kvPair.Value} pieces of equipment");
+                }
+            }
+        }
     }
     
     internal class Program
@@ -346,7 +478,7 @@ namespace lab2v7
                 }
             }
 
-            string[] MenuItems = { "Добавить запись", "Посмотреть записи", "Изменить запись", "Удалить запись", "Выйти" };
+            string[] MenuItems = { "Добавить запись", "Посмотреть записи", "Изменить запись", "Удалить запись", "Создать отчет", "Выйти" };
             string[] RecordTypes = { "Оборудование списанное по времени", "Оборудование списанное по другой причине" };
             int MenuItemNumber = 0;
 
@@ -649,6 +781,19 @@ namespace lab2v7
                                             break;
                                     }
                                 }
+                                break;
+                            case "Создать отчет":
+                                Console.Clear();
+                                Console.WriteLine("Введите путь до файла");
+                                Console.Write("> ");
+                                var path = Console.ReadLine();
+                                Console.WriteLine("Введите возраст от");
+                                Console.Write("> ");
+                                var ageFrom = Convert.ToInt32(Console.ReadLine());
+                                Console.WriteLine("Введите возраст до");
+                                Console.Write("> ");
+                                var ageTo = Convert.ToInt32(Console.ReadLine());
+                                businessLogic.CreateReport(path, ageFrom, ageTo);
                                 break;
                             case "Выйти":
                                 isWork = false;
