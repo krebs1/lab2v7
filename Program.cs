@@ -217,11 +217,11 @@ namespace lab2v7
                     switch (type1)
                     {
                         case 0:
-                            offset = offset + 1 + 4 + a.Length + 1 + b.Length + 1 + c.Length + 1 + d.Length + 1 + e.Length + 1;
+                            offset = offset + 1 + 1 + 4 + a.Length + 1 + b.Length + 1 + c.Length + 1 + d.Length + 1 + e.Length + 1;
                             break;
                         case 1:
                             var f = reader.ReadString();
-                            offset = offset + 1 + 4 + a.Length + 1 + b.Length + 1 + c.Length + 1 + d.Length + 1 + e.Length + 1 + f.Length + 1;
+                            offset = offset + 1 + 1 + 4 + a.Length + 1 + b.Length + 1 + c.Length + 1 + d.Length + 1 + e.Length + 1 + f.Length + 1;
                             break;
                     }
                     
@@ -307,11 +307,11 @@ namespace lab2v7
                 switch (type)
                 {
                     case 0:
-                        offset = offset + 1 + 4 + a.Length + 1 + b.Length + 1 + c.Length + 1 + d.Length + 1 + e.Length + 1;
+                        offset = offset + 1 + 1 + 4 + a.Length + 1 + b.Length + 1 + c.Length + 1 + d.Length + 1 + e.Length + 1;
                         break;
                     case 1:
                         var f = reader.ReadString();
-                        offset = offset + 1 + 4 + a.Length + 1 + b.Length + 1 + c.Length + 1 + d.Length + 1 + e.Length + 1 + f.Length + 1;
+                        offset = offset + 1 + 1 + 4 + a.Length + 1 + b.Length + 1 + c.Length + 1 + d.Length + 1 + e.Length + 1 + f.Length + 1;
                         break;
                 }
             }
